@@ -11,21 +11,31 @@ import (
 )
 
 const (
-	PIPE_BUFF_SIZE            = 64                     // explained in note 2
-	PIPE_READ_INTERVAL        = time.Second            // explained in note 3
-	KILL_SIGNAL               = "LOOP_EXIT"            // explained in note 4
-	MAIN_LOOP_REPEAT_INTERVAL = time.Millisecond * 100 // explained in note 5
-	BUFFER_SIZE               = 512                    // explained on line 66
+	PIPE_BUFFER_SIZE   = 64                     // explained in note 2
+	PIPE_READ_INTERVAL = time.Second            // explained in note 3
+	KILL_SIGNAL        = "LOOP_EXIT"            // explained in note 4
+	MAIN_LOOP_INTERVAL = time.Millisecond * 100 // explained in note 5
+	MAIN_BUFFER_SIZE   = 512                    // explained on line 66
 )
 
 var defaultCommand = "echo hello world"
 
 func main() {
 	log.Print("program is running now")
-	//setting up flags to get user information flags
-	pipeName := flag.String("pname", "/home/pi/Desktop/pp", "absolute path(inclding name) of the named pipe you want to use")
-	directoryPath := flag.String("working-drectory", "/home/pi/Downloads", "working directory of program")
+
+	//getting user home directory to use it as default
+	home, err := os.UserHomeDir()
+
+	if err != nil {
+		log.Fatalf("could not get user home directory : %s", err)
+	}
+
+	//setting flags to get user information flags
+	pipeName := flag.String("pname", "/tmp/pp", "absolute path(inclding name) of the named pipe you want to use")
+	directoryPath := flag.String("working-drectory", home, "working directory of program")
 	command := flag.String("cmd", defaultCommand, "actual command to execure")
+
+	flag.Parse() // parsing user args to get flag inputs
 
 	go func() {
 
@@ -38,7 +48,7 @@ func main() {
 			}
 
 			// see note 2 for more details
-			buffer := make([]byte, PIPE_BUFF_SIZE)
+			buffer := make([]byte, PIPE_BUFFER_SIZE)
 
 			// see note 3 for why i have added time.sleep() here
 			time.Sleep(PIPE_READ_INTERVAL)
@@ -61,7 +71,7 @@ func main() {
 	for {
 
 		log.Printf("executing command %s", *command)
-		buffer := bytes.NewBuffer(make([]byte, BUFFER_SIZE))
+		buffer := bytes.NewBuffer(make([]byte, MAIN_BUFFER_SIZE))
 
 		cmd := exec.Command("bash", "-c", *command)
 		cmd.Stdout = buffer      // for storing output, upto first 512 chars from it, you can increase it increasing value of BUFFER_SIZE constant
@@ -74,7 +84,7 @@ func main() {
 		log.Print(buffer.String())
 
 		// see note 5 for why adding time.Sleep() here
-		time.Sleep(MAIN_LOOP_REPEAT_INTERVAL)
+		time.Sleep(MAIN_LOOP_INTERVAL)
 	}
 }
 
