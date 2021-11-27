@@ -18,12 +18,6 @@ const (
 	MAIN_BUFFER_SIZE   = 512                    // explained on line 66
 )
 
-const copyrightNotice = `
-
-
-(C) Copyright hridyansh singh 2021
-`
-
 var defaultCommand = "echo hello world"
 
 func main() {
@@ -39,7 +33,7 @@ func main() {
 	//setting flags to get user information flags
 	pipeName := flag.String("pname", "/tmp/pp", "absolute path(inclding name) of the named pipe you want to use")
 	directoryPath := flag.String("working-drectory", home, "working directory of program")
-	command := flag.String("cmd", defaultCommand, "actual command to execute"+copyrightNotice)
+	command := flag.String("cmd", defaultCommand, "actual command to execute")
 
 	flag.Parse() // parsing user args to get flag inputs
 
