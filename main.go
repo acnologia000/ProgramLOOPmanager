@@ -18,6 +18,12 @@ const (
 	MAIN_BUFFER_SIZE   = 512                    // explained on line 66
 )
 
+const copyrightNotice = `
+
+
+(C) Copyright hridyansh singh 2021
+`
+
 var defaultCommand = "echo hello world"
 
 func main() {
@@ -33,7 +39,7 @@ func main() {
 	//setting flags to get user information flags
 	pipeName := flag.String("pname", "/tmp/pp", "absolute path(inclding name) of the named pipe you want to use")
 	directoryPath := flag.String("working-drectory", home, "working directory of program")
-	command := flag.String("cmd", defaultCommand, "actual command to execure")
+	command := flag.String("cmd", defaultCommand, "actual command to execute"+copyrightNotice)
 
 	flag.Parse() // parsing user args to get flag inputs
 
@@ -127,7 +133,5 @@ adding sleep option between runs so that it does not completely
 gobbles system resources, set it accordingly and try not to make it 0
 as its bit risky because in inifinite loop it can crash system,
 setting it on 0 is effectively ddosing yourself in case of problem
-
-
 
 */
